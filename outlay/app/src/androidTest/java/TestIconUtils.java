@@ -1,5 +1,3 @@
-package test;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
