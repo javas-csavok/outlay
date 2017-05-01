@@ -2,16 +2,30 @@ package test;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import com.github.johnkil.print.PrintView;
+import com.mikepenz.iconics.Iconics;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.IIcon;
+
+import app.outlay.domain.model.Category;
 
 import java.util.List;
 
 import app.outlay.utils.IconUtils;
+import app.outlay.utils.ResourceUtils;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Stahorszki Péter on 2017. 05. 01..
@@ -19,13 +33,11 @@ import static org.junit.Assert.assertEquals;
 
 public class TestIconUtils {
 
-    private Context context = Mockito.mock(Context.class);
-    private Resources resources = Mockito.mock(Resources.class);
-
-    @Before
-    public void setUp(){
-
-    }
+    private Context testContext = Mockito.mock(Context.class);
+    private Resources testResources = Mockito.mock(Resources.class);
+    private Category testCategory = Mockito.mock(Category.class);
+    private PrintView testPrintView = Mockito.mock(PrintView.class);
+    private IIcon testIIcon = Mockito.mock(IIcon.class);
 
     @Test
     public void testGetAll(){
@@ -35,37 +47,72 @@ public class TestIconUtils {
     }
 
     @Test
-    public void loadCategoryIcon(){
+    public void loadCategoryIconCategoryAsParam(){
+        when(testCategory.getIcon()).thenReturn("test-icon.png");
+        when(testCategory.getColor()).thenReturn(3);
+        when(testPrintView.getContext()).thenReturn(testContext);
+        when(testContext.getPackageName()).thenReturn("packagename");
+        when(testContext.getResources()).thenReturn(testResources);
+        when(testResources.getIdentifier("pvar", "integer", "packagename")).thenReturn(0);
 
+        IconUtils iconUtils = new IconUtils();
+
+        iconUtils.loadCategoryIcon(testCategory, testPrintView);
+
+        verify(testPrintView, times(1)).setIconFont("fonts/font-outlay.ttf");
+        verify(testPrintView, times(1)).setIconCodeRes(0);
+        verify(testPrintView, times(1)).setIconColor(testCategory.getColor());
+    }
+
+    @Test
+    public void loadCategoryIconStringAsParam(){
+        when(testCategory.getIcon()).thenReturn("test-icon.png");
+        when(testCategory.getColor()).thenReturn(3);
+        when(testPrintView.getContext()).thenReturn(testContext);
+        when(testContext.getPackageName()).thenReturn("packagename");
+        when(testContext.getResources()).thenReturn(testResources);
+        when(testResources.getIdentifier("pvar", "integer", "packagename")).thenReturn(0);
+
+        IconUtils iconUtils = new IconUtils();
+        iconUtils.loadCategoryIcon("icon", testPrintView);
+
+        verify(testPrintView, times(1)).setIconFont("fonts/font-outlay.ttf");
+        verify(testPrintView, times(1)).setIconCodeRes(0);
     }
 
     @Test
     public void getToolbarIcon(){
+        /*
+        In the IconicsDrawable I get an exception in the prepare function
+        for the mPaint.setStyle(....) because it is not mocked. I don't know how to
+        make it happen
+        */
+        /*
+        IconUtils iconUtils = new IconUtils();
+        IconicsDrawable result = (IconicsDrawable) iconUtils.getToolbarIcon(testContext, testIIcon);
 
+        assertEquals(testIIcon, result.getIcon());
+        assertEquals(Color.WHITE, result.getColor());
+        */
     }
 
     @Test
-    public void getIconMaterialIcon1(){
-
+    public void getToolbarIconWithPaddingDp(){
+        /*Same problem as with getToolbarIcon*/
     }
 
     @Test
-    public void getIconMaterialIcon2(){
-
+    public void getIconMaterialIcon(){
+        /*Same problem as with getToolbarIcon*/
     }
 
     @Test
-    public void getToolbarIcon2(){
-
-    }
-
-    @Test
-    public void loadCategoryIcon2(){
-
+    public void getIconMaterialIconWithPaddingDp(){
+        /*Same problem as with getToolbarIcon*/
     }
 
     @Test
     public void getCategoryIcon(){
-
+        /*Same problem as with getToolbarIcon*/
     }
 }
