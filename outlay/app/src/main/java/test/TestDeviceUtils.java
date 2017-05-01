@@ -2,9 +2,14 @@ package test;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.inputmethodservice.InputMethodService;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +31,10 @@ public class TestDeviceUtils {
     private Activity activity = Mockito.mock(Activity.class);
     private View view = Mockito.mock(View.class);
     private InputMethodManager inputMethodManager = Mockito.mock(InputMethodManager.class);
+    private Context context = Mockito.mock(Context.class);
+    private TypedValue tv = Mockito.mock(TypedValue.class);
+    private Resources.Theme theme = Mockito.mock(Resources.Theme.class);
+    private Resources resources = Mockito.mock(Resources.class);
 
     @Before
     public void setup(){
@@ -44,12 +53,25 @@ public class TestDeviceUtils {
     public void getStatusBarHeightBranchFalse(){
 
     }
+    //cannot tested, because the creation of the TypedValue object in the method
     @Test
     public void getActionBarHeightBranchTrue(){
+
+        when(context.getTheme()).thenReturn(theme);
+        when(context.getResources()).thenReturn(resources);
+
+        Assert.assertEquals(0,DeviceUtils.getActionBarHeight(context));
+
 
     }
     @Test
     public void getActionBarHeightBranchFalse(){
+        when(context.getTheme()).thenReturn(theme);
+        when(theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)).thenReturn(false);
+
+        Assert.assertEquals(0,DeviceUtils.getActionBarHeight(context));
+
+        verify(context, never()).getResources();
 
     }
     @Test
