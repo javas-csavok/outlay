@@ -37,7 +37,7 @@ public class TestIconUtils {
     private Resources testResources = Mockito.mock(Resources.class);
     private Category testCategory = Mockito.mock(Category.class);
     private PrintView testPrintView = Mockito.mock(PrintView.class);
-    private IIcon testIIcon = Mockito.mock(IIcon.class);
+    //private IIcon testIIcon = Mockito.mock(IIcon.class);
 
     @Test
     public void testGetAll(){
@@ -78,6 +78,30 @@ public class TestIconUtils {
 
         verify(testPrintView, times(1)).setIconFont("fonts/font-outlay.ttf");
         verify(testPrintView, times(1)).setIconCodeRes(0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void loadCategoryIconNullCategoryParameters(){
+        when(testPrintView.getContext()).thenReturn(testContext);
+        when(testContext.getPackageName()).thenReturn("packagename");
+        when(testContext.getResources()).thenReturn(testResources);
+        when(testResources.getIdentifier("pvar", "integer", "packagename")).thenReturn(0);
+        testCategory = null;
+        IconUtils iconUtils = new IconUtils();
+        iconUtils.loadCategoryIcon(testCategory, testPrintView);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void loadCategoryIconNullPrintViewParameters(){
+        when(testCategory.getIcon()).thenReturn("test-icon.png");
+        when(testCategory.getColor()).thenReturn(3);
+        when(testPrintView.getContext()).thenReturn(testContext);
+        when(testContext.getPackageName()).thenReturn("packagename");
+        when(testContext.getResources()).thenReturn(testResources);
+        when(testResources.getIdentifier("pvar", "integer", "packagename")).thenReturn(0);
+        testPrintView = null;
+        IconUtils iconUtils = new IconUtils();
+        iconUtils.loadCategoryIcon(testCategory, testPrintView);
     }
 
     @Test
